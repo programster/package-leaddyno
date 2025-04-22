@@ -1,7 +1,13 @@
 LeadDyno PHP Package
 ====================
 
-An SDK for interfacing with the LeadDyno RESTful API in PHP. 
+An SDK for interfacing with the 
+[LeadDyno RESTful API](https://app.theneo.io/leaddyno/leaddyno-rest-api/leaddyno-api) in PHP. 
+
+This package makes use of the PSR-17 and PSR-18 interfaces, so this package should be able to work
+with any existing mechanism you use to send messages. If you are not sure what this means, then
+we would recommend that you just install the `guzzlehttp/guzzle` package, and follow the example
+in the README.
 
 
 ## Usage
