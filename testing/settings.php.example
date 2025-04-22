@@ -1,0 +1,4 @@
+<?php
+
+# Provide the API key to use for sending requests to LeadDyno
+define('LEADDYNO_API_KEY', '');
