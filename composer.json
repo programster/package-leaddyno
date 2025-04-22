@@ -1,0 +1,28 @@
+{
+    "name": "programster/leaddyno",
+    "description": "An SDK for interfacing with the Leaddyno RESTful API",
+    "keywords": ["leaddyno", "affiliates", "SDK"],
+    "homepage": "https://github.com/programster/package-leaddyno",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stuart Page",
+            "homepage": "https://blog.programster.org"
+        }
+    ],
+    "require": {
+        "php": ">=8.2.0",
+        "psr/http-factory": "^1.1",
+        "psr/http-client": "^1.0",
+        "programster/collections": "^0.1.0"
+    },
+    "require-dev" : {
+        "guzzlehttp/guzzle": "^7.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Programster\\LeadDyno\\": "src/",
+            "Programster\\LeadDyno\\Exceptions\\": "src/exceptions/"
+        }
+    }
+}
