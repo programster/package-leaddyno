@@ -12,7 +12,11 @@ use Psr\Http\Message\ResponseInterface;
 
 class LeadDyno
 {
-    private readonly string $baseUrl;
+    private string $baseUrl;
+    private string $apiKey;
+    private RequestFactoryInterface $requestFactory;
+    private ClientInterface $httpClient;
+
 
 
     /**
@@ -27,11 +31,14 @@ class LeadDyno
      * \GuzzleHttp\Client is recommended
      */
     public function __construct(
-        private readonly string $apiKey,
-        private readonly RequestFactoryInterface $requestFactory,
-        private readonly ClientInterface $httpClient
+        string $apiKey,
+        RequestFactoryInterface $requestFactory,
+        ClientInterface $httpClient
     )
     {
+        $this->apiKey = $apiKey;
+        $this->requestFactory = $requestFactory;
+        $this->httpClient = $httpClient;
         $this->baseUrl = "https://api.leaddyno.com/v1";
     }
 
@@ -46,7 +53,7 @@ class LeadDyno
      * @param ?string $affiliateCode - The affiliate code to which the purchase should be assigned. This parameter is
      * optional and its usage depends on the 'first source wins' or 'first affiliate wins' settings.
      * @param string $description - Text description of the purchase.
-     * @param bool $reassignAffiliate - optionally set to false to have the original affiliate of the lead (if there is one)
+     * @param bool $reassignAffiliate - optionally set as false to have the original affiliate of the lead (if there is one)
      * be retained.
      * @param LineItemCollection|null $lineItems - optionally provide the line items that were purchased.
      * @param float|null $commissionAmountOverride - optionally override the fixed amount of commission.
@@ -61,7 +68,7 @@ class LeadDyno
         string $description,
         bool $reassignAffiliate = true,
         ?LineItemCollection $lineItems = null,
-        ?float $commissionAmountOverride = null,
+        ?float $commissionAmountOverride = null
     ) : ResponseInterface
     {
         $body = [
@@ -70,6 +77,7 @@ class LeadDyno
             "plan_code" => $planCode,
             "code" => $affiliateCode,
             "description" => $description,
+            "reassign_affiliate" => $reassignAffiliate,
         ];
 
         if ($purchaseId !== null)
@@ -79,11 +87,15 @@ class LeadDyno
 
         if ($lineItems !== null && count($lineItems) > 0)
         {
-            /* @var $lineItems LineItemCollection */
             $body["line_items"] = $lineItems->getArrayCopy();
         }
 
-        return $this->sendRequest(method: "POST", path: "/purchases", requestParams: $body);
+        if ($commissionAmountOverride !== null)
+        {
+            $body["commission_amount_override"] = $commissionAmountOverride;
+        }
+
+        return $this->sendRequest("POST", "/purchases", $body);
     }
 
 
@@ -107,7 +119,6 @@ class LeadDyno
             $request = $request->withBody($body);
         }
 
-        $response = $this->httpClient->sendRequest($request);
-        return $response;
+        return $this->httpClient->sendRequest($request);
     }
 }

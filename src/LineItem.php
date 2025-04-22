@@ -6,8 +6,16 @@
 
 namespace Programster\LeadDyno;
 
-class LineItem implements \JsonSerializable
+use JsonSerializable;
+
+class LineItem implements JsonSerializable
 {
+    private string $sku;
+    private string $description;
+    private string $quantity;
+    private string $amount;
+
+
     /**
      * Create a LineItem for a purchase
      * @param string $sku - the SKU of the product being purchased.
@@ -17,17 +25,20 @@ class LineItem implements \JsonSerializable
      * @param string $amount - the price for each of the line items.
      */
     public function __construct(
-        public readonly string $sku,
-        public readonly string $description,
-        public readonly string $quantity,
-        public readonly string $amount
+        string $sku,
+        string $description,
+        string $quantity,
+        string $amount
     )
     {
-
+        $this->sku = $sku;
+        $this->amount = $amount;
+        $this->description = $description;
+        $this->quantity = $quantity;
     }
 
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize() : array
     {
         return [
             'sku' => $this->sku,
