@@ -53,6 +53,8 @@ class LeadDyno
      * @param ?string $affiliateCode - The affiliate code to which the purchase should be assigned. This parameter is
      * optional and its usage depends on the 'first source wins' or 'first affiliate wins' settings.
      * @param string $description - Text description of the purchase.
+     * @param string $currency - the currency code to set. E.g. "USD" or "GBP". If left as null (default), then the
+     * default currency set on the LeadDyno account will be used.
      * @param bool $reassignAffiliate - optionally set as false to have the original affiliate of the lead (if there is one)
      * be retained.
      * @param LineItemCollection|null $lineItems - optionally provide the line items that were purchased.
@@ -66,6 +68,7 @@ class LeadDyno
         string $planCode,
         ?string $affiliateCode,
         string $description,
+        ?string $currency = null,
         bool $reassignAffiliate = true,
         ?LineItemCollection $lineItems = null,
         ?float $commissionAmountOverride = null
@@ -79,6 +82,11 @@ class LeadDyno
             "description" => $description,
             "reassign_affiliate" => $reassignAffiliate,
         ];
+
+        if ($currency !== null)
+        {
+            $body["currency"] = $currency;
+        }
 
         if ($purchaseId !== null)
         {

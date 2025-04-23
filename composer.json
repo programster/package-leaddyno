@@ -18,12 +18,20 @@
         "ext-json": "*"
     },
     "require-dev" : {
-        "guzzlehttp/guzzle": "^7.9"
+        "guzzlehttp/guzzle": "^7.9",
+        "slim/psr7": "1.6.*",
+        "php-http/curl-client": "2.3.*",
+        "fakerphp/faker": "^1.24"
     },
     "autoload": {
         "psr-4": {
             "Programster\\LeadDyno\\": "src/",
             "Programster\\LeadDyno\\Exceptions\\": "src/exceptions/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
         }
     }
 }

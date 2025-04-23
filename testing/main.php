@@ -3,15 +3,29 @@
 use Programster\LeadDyno\LeadDyno;
 use Programster\LeadDyno\LineItem;
 use Programster\LeadDyno\LineItemCollection;
+use Slim\Psr7\Factory\RequestFactory;
 
 require_once(__DIR__ . "/settings.php");
 require_once(__DIR__ . "/../vendor/autoload.php");
 
-$leadDyno = new LeadDyno(
-    LEADDYNO_API_KEY,
-    new \GuzzleHttp\Psr7\HttpFactory(),
-    new \GuzzleHttp\Client(),
-);
+$useGuzzleForRequests = false;
+
+if ($useGuzzleForRequests)
+{
+    $leadDyno = new LeadDyno(
+        LEADDYNO_API_KEY,
+        new RequestFactory(),
+        new \Http\Client\Curl\Client()
+    );
+}
+else
+{
+    $leadDyno = new LeadDyno(
+        LEADDYNO_API_KEY,
+        new \GuzzleHttp\Psr7\HttpFactory(),
+        new \GuzzleHttp\Client()
+    );
+}
 
 $lineItems = new LineItemCollection(
     new LineItem(
@@ -23,15 +37,18 @@ $lineItems = new LineItemCollection(
 );
 
 $affiliateCode = "testing123";
+$faker = Faker\Factory::create();
 
 $response = $leadDyno->createPurchase(
-    customerEmail: "test-customer@gmail.com",
-    purchaseAmount: 123.45,
-    purchaseId: "9eb2d2b1-f4fb-4b2c-84e3-688f950db50d",
-    planCode: "Default",
-    affiliateCode: $affiliateCode,
-    description: "Description of purchase goes here.",
-    lineItems: $lineItems,
+    "test-customer@gmail.com",
+    123.45,
+    $faker->uuid(),
+    "Default",
+    $affiliateCode,
+    "Description of purchase goes here.",
+    "USD",
+    true,
+    $lineItems,
 );
 
 if ($response->getStatusCode() === 201)
