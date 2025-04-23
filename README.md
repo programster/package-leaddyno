@@ -68,3 +68,11 @@ else
     // Handle error response here...
 }
 ```
+
+## Warnings
+
+### Unique Purchase Identifiers
+I noticed when performing testing, that if one creates a purchase, but does not change the purchase
+ID from one that was already sent, then the response will come back as 201 for success, but a new 
+purchase will not be registered. This should not be too much of an issue, as each purchase should
+have a unique ID anyway but is worth noting.
