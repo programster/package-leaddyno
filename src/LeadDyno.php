@@ -6,6 +6,7 @@
 
 namespace Programster\LeadDyno;
 
+use Programster\LeadDyno\Exceptions\ExceptionUnexpectedResponse;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -40,6 +41,43 @@ class LeadDyno
         $this->requestFactory = $requestFactory;
         $this->httpClient = $httpClient;
         $this->baseUrl = "https://api.leaddyno.com/v1";
+    }
+
+
+    /**
+     * Retrieve affiliates from LeadDyno.
+     * @param int $page - optionally specify a page of results of affiliates to fetch, if your system has more than 100
+     * affiliates.
+     * @param int $affiliatesPerPage - how many affiliates to return per page.
+     * @return AffiliateCollection - the fetched affiliates from LeadDyno.
+     * @throws ExceptionUnexpectedResponse - if failed to retrieve affiliates from LeadDyno.
+     */
+    public function getAffiliates(int $page = 1, int $affiliatesPerPage = 100) : AffiliateCollection
+    {
+        $body = [
+            'page' => $page,
+            'per_page' => $affiliatesPerPage,
+        ];
+
+        $response = $this->sendRequest("GET", "/affiliates", $body);
+
+        if ($response->getStatusCode() !== 200)
+        {
+            throw new ExceptionUnexpectedResponse($response);
+        }
+
+        $responseBody = $response->getBody()->getContents();
+        $affiliatesArray = json_decode($responseBody, true);
+
+        $affiliates = new AffiliateCollection();
+
+        foreach ($affiliatesArray as $affiliateInArrayFormat)
+        {
+            $affiliate = Affiliate::createFromLeadDynoResponse($affiliateInArrayFormat);
+            $affiliates->append($affiliate);
+        }
+
+        return $affiliates;
     }
 
 
